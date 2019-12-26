@@ -5895,6 +5895,30 @@ extension Web3.Utils {
     
 }
 
+extension UInt8 {
+    /// - Returns: Byte as hex string (from "00" to "ff")
+    public var hex: String {
+        if self < 0x10 {
+            return "0" + String(self, radix: 16)
+        } else {
+            return String(self, radix: 16)
+        }
+    }
+}
+
+extension Data {
+    /// - Returns: Hex representation of data
+    var hex: String {
+        var string = ""
+        withUnsafeBytes { (bytes: UnsafePointer<UInt8>) in
+            for i in 0..<count {
+                string += bytes[i].hex
+            }
+        }
+        return string
+    }
+}
+
 extension Web3.Utils {
     
     /// Convert the private key (32 bytes of Data) to compressed (33 bytes) or non-compressed (65 bytes) public key.
@@ -5931,10 +5955,17 @@ extension Web3.Utils {
     /// or raw concat(X,Y) (64 bytes) format.
     ///
     /// Returns the EthereumAddress object.
-    public static func publicToAddress(_ publicKey: Data) -> EthereumAddress? {
-        guard let addressData = Web3.Utils.publicToAddressData(publicKey) else {return nil}
-        let address = addressData.toHexString().addHexPrefix().lowercased()
-        return EthereumAddress(address)
+    public static func publicToAddress(_ publicKey: Data, walletType: CreateWalletType = CreateWalletType.htdf) -> EthereumAddress? {
+        
+        switch walletType {
+        case .htdf, .usdp, .het:
+            return EthereumAddress(publicKey.hex, walletType: walletType)
+        
+        default:
+            guard let addressData = Web3.Utils.publicToAddressData(publicKey) else {return nil}
+            let address = addressData.toHexString().addHexPrefix().lowercased()
+            return EthereumAddress(address, walletType: walletType)
+        }
     }
     
     /// Convert a public key to the corresponding EthereumAddress. Accepts public keys in compressed (33 bytes), non-compressed (65 bytes)

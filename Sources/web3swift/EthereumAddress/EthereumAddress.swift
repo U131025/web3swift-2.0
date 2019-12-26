@@ -313,13 +313,11 @@ public struct EthereumAddress: Equatable {
     }
     
     var walletType = CreateWalletType.eth
-    public init?(addressString:String, type: AddressType = .normal, walletType: CreateWalletType = CreateWalletType.htdf) {
         
-        self.init(addressString, type: type)
+    public init?(_ addressString:String, type: AddressType = .normal, ignoreChecksum: Bool = false, walletType: CreateWalletType = CreateWalletType.eth) {
+        
         self.walletType = walletType
-    }
-    
-    public init?(_ addressString:String, type: AddressType = .normal, ignoreChecksum: Bool = false) {
+        
         switch type {
         case .normal:
             guard let data = Data.fromHex(addressString) else {return nil}

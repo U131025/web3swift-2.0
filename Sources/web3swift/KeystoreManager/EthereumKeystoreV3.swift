@@ -70,13 +70,13 @@ public class EthereumKeystoreV3: AbstractKeystore {
         try encryptDataToStorage(password, keyData: newPrivateKey, aesMode: aesMode)
     }
     
-    public init? (privateKey: Data, password: String = "web3swift", aesMode: String = "aes-128-cbc") throws {
+    public init? (privateKey: Data, password: String = "web3swift", aesMode: String = "aes-128-cbc", walletType: CreateWalletType = CreateWalletType.htdf) throws {
         guard privateKey.count == 32 else {return nil}
         guard SECP256K1.verifyPrivateKey(privateKey: privateKey) else {return nil}
         try encryptDataToStorage(password, keyData: privateKey, aesMode: aesMode)
     }
     
-    fileprivate func encryptDataToStorage(_ password: String, keyData: Data?, dkLen: Int=32, N: Int = 4096, R: Int = 6, P: Int = 1, aesMode: String = "aes-128-cbc") throws {
+    fileprivate func encryptDataToStorage(_ password: String, keyData: Data?, dkLen: Int=32, N: Int = 4096, R: Int = 6, P: Int = 1, aesMode: String = "aes-128-cbc", walletType: CreateWalletType = CreateWalletType.htdf) throws {
         if (keyData == nil) {
             throw AbstractKeystoreError.encryptionError("Encryption without key data")
         }

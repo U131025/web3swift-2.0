@@ -102,6 +102,24 @@ public class KeystoreManager: AbstractKeystore {
             return self._plainKeystores
         }
     }
+    /// Appends keystore
+    ///
+    /// - Parameter keystore: Keystore to append
+    public func append(_ keystore: EthereumKeystoreV3) {
+        _keystores.append(keystore)
+    }
+    /// Appends keystore
+    ///
+    /// - Parameter keystore: Keystore to append
+    public func append(_ keystore: BIP32Keystore) {
+        _bip32keystores.append(keystore)
+    }
+    /// Appends keystore
+    ///
+    /// - Parameter keystore: Keystore to append
+    public func append(_ keystore: PlainKeystore) {
+        _plainKeystores.append(keystore)
+    }
     
     public init(_ keystores: [EthereumKeystoreV3]) {
         self.isHDKeystore = false
