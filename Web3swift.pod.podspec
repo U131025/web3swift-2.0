@@ -5,9 +5,9 @@ Pod::Spec.new do |spec|
     spec.osx.deployment_target = "10.11"
     spec.license      = { :type => 'Apache License 2.0', :file => 'LICENSE.md' }
     spec.summary      = 'Web3 implementation in vanilla Swift for iOS, macOS, and Linux'
-    spec.homepage     = 'https://github.com/matter-labs/web3swift'
+    spec.homepage     = 'https://github.com/U131025/web3swift-2.0'
     spec.author       = { "Alex Vlasov" => "alex.m.vlasov@gmail.com", "Anton Grigorev" => "antongrigorjev2010@gmail.com" }
-    spec.source       = { :git => 'https://github.com/matter-labs/web3swift.git', :tag => spec.version.to_s }
+    spec.source       = { :git => 'https://github.com/U131025/web3swift-2.0.git', :tag => spec.version.to_s }
     spec.source_files = "Sources/web3swift/{Contract,Convenience,EthereumABI,EthereumAddress,HookedFunctions,KeystoreManager,Promises,SwiftRLP,Transaction,Web3}/*.swift", "Sources/web3swift/{Tokens,Utils}/**/*.swift"
     spec.swift_version = '5.0'
     spec.module_name = 'web3swift'
