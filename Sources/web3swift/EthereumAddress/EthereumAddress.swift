@@ -9,7 +9,24 @@
 import Foundation
 import CryptoSwift
 
+public enum CreateWalletType {
+    case htdf
+    case usdp
+    case eth
+    case het
+    case bit
+    case bch
+    case ltc
+    case dash
+    case bsv
+    case xrp
+    case trx
+}
+
 public struct EthereumAddress: Equatable {
+    
+    var walletType = CreateWalletType.eth
+    
     public enum AddressType {
         case normal
         case contractDeployment
@@ -49,10 +66,45 @@ public struct EthereumAddress: Equatable {
     public var address:String {
         switch self.type {
         case .normal:
-            return EthereumAddress.toChecksumAddress(_address)!
+            
+            switch walletType {
+            case .usdp:
+                return getUSDPAddress()
+            case .htdf:
+                return  getHTDFAddress()
+            case .het:
+                return  getHETAddress()
+            default:
+                return EthereumAddress.toChecksumAddress(_address)!
+            }
+            
         case .contractDeployment:
             return "0x"
         }
+    }
+    
+    private func getUSDPAddress() -> String {
+        let compressData = try! SECP256K1.combineSerializedPublicKeys(keys: [addressData], outputCompressed: true)
+        let sourceData = Data(hexStr: "PubKeySecp256k1") + Data(bytes: compressData.bytesWeb)
+        
+        let data = RIPEMD160.hash(message: sourceData.sha256())
+        let covertData = Bech32().covertBits(data: data, fromBits: 8, toBits: 5, pad: true)
+        return Bech32().encode(hrp: "usdp", data: covertData)
+    }
+    
+    public func getHTDFAddress() -> String {
+        let compressData = try! SECP256K1.combineSerializedPublicKeys(keys: [addressData], outputCompressed: true)
+        let sourceData = Data(hexStr: "PubKeySecp256k1") + Data(bytes: compressData.bytesWeb)
+        let data = RIPEMD160.hash(message: sourceData.sha256())
+        let covertData = Bech32().covertBits(data: data, fromBits: 8, toBits: 5, pad: true)
+        return Bech32().encode(hrp: "htdf", data: covertData)
+    }
+    public func getHETAddress() -> String {
+        let compressData = try! SECP256K1.combineSerializedPublicKeys(keys: [addressData], outputCompressed: true)
+        let sourceData = Data(hexStr: "PubKeySecp256k1") + Data(bytes: compressData.bytesWeb)
+        let data = RIPEMD160.hash(message: sourceData.sha256())
+        let covertData = Bech32().covertBits(data: data, fromBits: 8, toBits: 5, pad: true)
+        return Bech32().encode(hrp: "0x", data: covertData)
     }
     
     public static func toChecksumAddress(_ addr:String) -> String? {
@@ -73,6 +125,12 @@ public struct EthereumAddress: Equatable {
             }
         }
         return ret
+    }
+    
+     
+    public init?(_ addressString:String, type: AddressType = .normal, walletType: CreateWalletType = CreateWalletType.htdf) {
+        self.walletType = walletType
+        self.init(addressString, type: type)
     }
     
     public init?(_ addressString:String, type: AddressType = .normal, ignoreChecksum: Bool = false) {
