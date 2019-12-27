@@ -73,7 +73,7 @@ public class EthereumKeystoreV3: AbstractKeystore {
     public init? (privateKey: Data, password: String = "web3swift", aesMode: String = "aes-128-cbc", walletType: CreateWalletType = CreateWalletType.htdf) throws {
         guard privateKey.count == 32 else {return nil}
         guard SECP256K1.verifyPrivateKey(privateKey: privateKey) else {return nil}
-        try encryptDataToStorage(password, keyData: privateKey, aesMode: aesMode)
+        try encryptDataToStorage(password, keyData: privateKey, aesMode: aesMode, walletType: walletType)
     }
     
     fileprivate func encryptDataToStorage(_ password: String, keyData: Data?, dkLen: Int=32, N: Int = 4096, R: Int = 6, P: Int = 1, aesMode: String = "aes-128-cbc", walletType: CreateWalletType = CreateWalletType.htdf) throws {
@@ -109,7 +109,7 @@ public class EthereumKeystoreV3: AbstractKeystore {
         let cipherparams = CipherParamsV3(iv: IV.toHexString())
         let crypto = CryptoParamsV3(ciphertext: encryptedKeyData.toHexString(), cipher: aesMode, cipherparams: cipherparams, kdf: "scrypt", kdfparams: kdfparams, mac: mac.toHexString(), version: nil)
         guard let pubKey = Web3.Utils.privateToPublic(keyData!) else {throw AbstractKeystoreError.keyDerivationError}
-        guard let addr = Web3.Utils.publicToAddress(pubKey) else {throw AbstractKeystoreError.keyDerivationError}
+        guard let addr = Web3.Utils.publicToAddress(pubKey, walletType: walletType) else {throw AbstractKeystoreError.keyDerivationError}
         self.address = addr
         let keystoreparams = KeystoreParamsV3(address: addr.address.lowercased(), crypto: crypto, id: UUID().uuidString.lowercased(), version: 3)
         self.keystoreParams = keystoreparams
